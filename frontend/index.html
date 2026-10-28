@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="내 시계열 데이터를 이해하는 AI 분석 비서" />
+    <title>Insight Mate</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#" aria-label="Insight Mate 홈">
+          <span class="brand-mark">IM</span>
+          <span><strong>Insight Mate</strong><small>DATA COMPANION</small></span>
+        </a>
+        <nav aria-label="주 메뉴">
+          <button class="nav-item active" data-view="chat"><span>✦</span> AI 인사이트</button>
+          <button class="nav-item" data-view="data"><span>⌁</span> 데이터 관리</button>
+          <button class="nav-item" data-view="history"><span>◷</span> 대화 기록</button>
+        </nav>
+        <div class="sidebar-bottom">
+          <button id="theme-toggle" class="ghost-button" aria-label="색상 모드 전환">☾ 다크 모드</button>
+          <div class="status"><i></i><span>API 연결 확인 중</span></div>
+        </div>
+      </aside>
+
+      <main>
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">PERSONAL DATA INTELLIGENCE</p>
+            <h1 id="page-title">오늘의 데이터, 더 명확하게</h1>
+          </div>
+          <button id="refresh-button" class="icon-button" title="새로고침" aria-label="데이터 새로고침">↻</button>
+        </header>
+
+        <section id="chat-view" class="view active">
+          <div id="summary-cards" class="summary-grid" aria-live="polite">
+            <article class="metric-card"><span>데이터 기간</span><strong id="metric-period">—</strong><small>분석 범위</small></article>
+            <article class="metric-card accent"><span>평균</span><strong id="metric-average">—</strong><small>전체 데이터 기준</small></article>
+            <article class="metric-card"><span>최근 트렌드</span><strong id="metric-trend">—</strong><small id="metric-count">0개 데이터</small></article>
+          </div>
+
+          <div class="workspace-grid">
+            <section class="panel chat-panel">
+              <div class="panel-heading">
+                <div><span class="live-dot"></span><strong>데이터 분석 비서</strong><small>저장된 데이터를 바탕으로 답해요</small></div>
+                <button id="new-chat" class="text-button">+ 새 대화</button>
+              </div>
+              <div id="messages" class="messages" aria-live="polite">
+                <div class="message assistant">
+                  <div class="avatar">IM</div>
+                  <div class="bubble">안녕하세요! 저장된 데이터의 흐름과 수치를 바탕으로 답변해 드릴게요. 최근 추세나 최고 기록을 물어보세요.</div>
+                </div>
+              </div>
+              <div id="suggestions" class="suggestions">
+                <button>최근 추세를 알려줘</button><button>평균과 최고값을 비교해줘</button><button>눈에 띄는 변화가 있어?</button>
+              </div>
+              <form id="chat-form" class="chat-input">
+                <label class="sr-only" for="chat-message">질문</label>
+                <input id="chat-message" maxlength="2000" placeholder="내 데이터에 대해 질문해 보세요" autocomplete="off" required />
+                <button type="submit" aria-label="메시지 전송">↑</button>
+              </form>
+              <p class="coldstart-note">첫 요청은 무료 서버가 깨어나는 데 최대 1분 정도 걸릴 수 있어요.</p>
+            </section>
+
+            <section class="panel chart-panel">
+              <div class="panel-heading"><div><strong>데이터 흐름</strong><small>최근 30개 기록</small></div><button id="export-button" class="text-button">CSV 내보내기</button></div>
+              <canvas id="trend-chart" width="620" height="360" aria-label="최근 데이터 추세 그래프"></canvas>
+              <div class="chart-insight"><span>✦</span><p><strong>한눈에 보는 인사이트</strong><small id="chart-caption">데이터를 불러오는 중입니다.</small></p></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="data-view" class="view">
+          <div class="section-head"><div><h2>데이터 관리</h2><p>날짜별 기록을 추가하고 수정하거나 삭제하세요.</p></div></div>
+          <div class="data-layout">
+            <form id="data-form" class="panel data-form">
+              <input id="edit-id" type="hidden" />
+              <h3 id="form-title">새 기록 추가</h3>
+              <label>날짜<input id="data-date" type="date" required /></label>
+              <label>값<input id="data-value" type="number" min="0" max="1000000000" step="0.01" placeholder="예: 150" required /></label>
+              <label>메모<textarea id="data-memo" maxlength="300" placeholder="기록에 대한 설명"></textarea></label>
+              <div class="form-actions"><button id="cancel-edit" type="button" class="secondary hidden">취소</button><button type="submit" class="primary">저장하기</button></div>
+              <p id="form-feedback" class="feedback" role="status"></p>
+            </form>
+            <section class="panel table-panel">
+              <div class="panel-heading"><div><strong>전체 기록</strong><small id="table-count">0개</small></div></div>
+              <div class="table-wrap"><table><thead><tr><th>날짜</th><th>값</th><th>메모</th><th>관리</th></tr></thead><tbody id="data-table"></tbody></table></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="history-view" class="view">
+          <div class="section-head"><div><h2>대화 기록</h2><p>저장된 대화를 선택하면 전체 메시지를 다시 볼 수 있어요.</p></div></div>
+          <div id="history-list" class="history-list"></div>
+        </section>
+      </main>
+    </div>
+    <div id="toast" class="toast" role="status"></div>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
+
